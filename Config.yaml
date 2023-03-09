@@ -1,0 +1,18 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/php:7.4
+        environment:
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_USER: root
+          MYSQL_PASSWORD: ""
+          MYSQL_DATABASE: test_db
+    steps:
+      - checkout
+      - run: apt-get update && apt-get install -y libpq-dev libjpeg-dev libpng-dev libxml2-dev libzip-dev unzip
+      - run: docker-php-ext-install mysqli pdo pdo_mysql gd zip xml bcmath opcache
+      - run: pecl install xdebug
+      - run: docker-php-ext-enable xdebug
+      - run: composer install
+      - run: php artisan migrate --force
